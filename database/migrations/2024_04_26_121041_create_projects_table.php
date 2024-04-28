@@ -12,14 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name', 30);
-            $table->string('last_name', 30);
-            $table->boolean('is_manager')->default(false);
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->foreignIdFor(Company::class)->nullable();
+            $table->string('title', 100);
+            $table->string('description', 2000);
+            $table->decimal('completion')->default(0);
+            $table->foreignIdFor(Company::class);
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('projects');
     }
 };
