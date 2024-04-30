@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ProjectController;
@@ -21,9 +21,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
     return $request->user();
-});*/
+});
 
 Route::apiResource('/meetings', MeetingController::class);
 Route::apiResource('/projects', ProjectController::class);
@@ -31,3 +33,6 @@ Route::apiResource('/tasks', TaskController::class);
 Route::apiResource('/invitations', InvitationController::class);
 Route::apiResource('/users', UserController::class);
 Route::apiResource('/companies', CompanyController::class);
+
+/*Route::group(['middleware' => ['auth:sanctum']], function() {
+});*/

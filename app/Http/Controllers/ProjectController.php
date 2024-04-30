@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ProjectController extends Controller
 {
@@ -17,19 +18,26 @@ class ProjectController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:100',
+                'description' => 'required|string|max:2000',
+                'company_id' => 'required',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+        $project = new Project();
+        $project->title = $validatedData['title'];
+        $project->description = $validatedData['description'];
+        $project->company_id = $validatedData['company_id'];
+        $project->save();
+        return response()
+        ->json(['message' => 'Project created successfully'], 201);
     }
 
     /**
