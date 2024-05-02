@@ -18,6 +18,7 @@ class UserResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'company' => $this->company->name,
+            'is_manager' => $this->is_manager,
         ];
     }
 }

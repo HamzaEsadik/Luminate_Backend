@@ -40,7 +40,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        auth()->user()->tokens()->delete();
+        $request->user()->tokens()->delete();
     }
     /**
      * Register Create new user + company
@@ -74,8 +74,7 @@ class AuthController extends Controller
             $user->company_id = $company->id;
         }
         $user->save();
-        $token = $user->createToken('userToken')->plainTextToken;
-        return response()
-        ->json(['token' => $token], 201);
+        $token = $user->createToken('userToken');
+        return ['token' => $token->plainTextToken];
     }
 }

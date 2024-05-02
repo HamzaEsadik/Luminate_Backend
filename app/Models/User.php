@@ -58,8 +58,4 @@ class User extends Authenticatable
     {
         return $this->hasone(Invitation::class);
     }
-    public function tokens()
-    {
-        return $this->hasMany(Token::class);
-    }
 }

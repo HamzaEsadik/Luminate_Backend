@@ -26,20 +26,4 @@ class CompanyController extends Controller
         return response()
         ->json(['message' => 'Company created successfully'], 201);
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Company $company)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Company $company)
-    {
-        //
-    }
 }

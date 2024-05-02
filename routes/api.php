@@ -20,19 +20,26 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
+//register
 Route::post('/register', [AuthController::class, 'register']);
-
-Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
-    return $request->user();
+//login
+Route::post('/login', [AuthController::class, 'login']);
+//auth group route
+Route::group(['middleware' => ['auth:sanctum']], function() {
+    //logout
+    Route::post('/logout', [AuthController::class, 'logout']);
+    //return user login
+    Route::apiResource('/users', UserController::class);
+    //Meeting POST-GET-DELET
+    Route::apiResource('/meetings', MeetingController::class);
+    //Projects POST-GET-DELET
+    Route::apiResource('/projects', ProjectController::class);
+    //Task POST-GET-DELET
+    Route::apiResource('/tasks', TaskController::class);
+    //Invitation POST-GET-DELET
+    Route::apiResource('/invitations', InvitationController::class);
+    //Accept Invitation
+    Route::put('/accept', [InvitationController::class, 'accepted']);
+    //Firing User
+    Route::put('/firing', [InvitationController::class, 'firing']);
 });
-
-Route::apiResource('/meetings', MeetingController::class);
-Route::apiResource('/projects', ProjectController::class);
-Route::apiResource('/tasks', TaskController::class);
-Route::apiResource('/invitations', InvitationController::class);
-Route::apiResource('/users', UserController::class);
-Route::apiResource('/companies', CompanyController::class);
-
-/*Route::group(['middleware' => ['auth:sanctum']], function() {
-});*/

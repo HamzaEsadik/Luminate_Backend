@@ -6,6 +6,7 @@ use App\Http\Resources\MeetingResource;
 use App\Models\Meeting;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 
 class MeetingController extends Controller
 {
@@ -14,7 +15,9 @@ class MeetingController extends Controller
      */
     public function index()
     {
-        return MeetingResource::collection(Meeting::all());
+        $user = Auth::user();
+        $companyId = $user->company_id;
+        return MeetingResource::collection(Meeting::where('company_id', $companyId)->get());
     }
 
     /**
@@ -22,46 +25,39 @@ class MeetingController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'title' => 'required|string|max:100',
-                'datetime' => 'required',
-                'company_id' => 'required',
-            ]);
-        } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
+        if (Auth::check()) {
+            // Get the authenticated user
+            $user = Auth::user();
+            if ($user->is_manager)
+            {
+                //validate meeting data to store
+                try {
+                    $validatedData = $request->validate([
+                        'title' => 'required|string|max:100',
+                        'datetime' => 'required',
+                    ]);
+                } catch (ValidationException $e) {
+                    return response()->json(['errors' => $e->errors()], 422);
+                }
+                $meeting = new Meeting();
+                $meeting->title = $validatedData['title'];
+                $meeting->datetime = $validatedData['datetime'];
+                $meeting->company_id = $user->company_id;
+                $meeting->save();
+                return response()
+                ->json(['message' => 'meeting created successfully'], 201);
+            }
+            else
+            {
+                return response()
+                ->json(['message' => 'you are not a manager'], 401);
+            }
+        } else {
+            // If user is not authenticated, return error
+            return response()
+            ->json(['error' => 'Unauthenticated'], 401);
         }
-        $meeting = new Meeting();
-        $meeting->title = $validatedData['title'];
-        $meeting->datetime = $validatedData['datetime'];
-        $meeting->company_id = $validatedData['company_id'];
-        $meeting->save();
-        return response()
-        ->json(['message' => 'meeting created successfully'], 201);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Meeting $meeting)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Meeting $meeting)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Meeting $meeting)
-    {
-        //
+        
     }
 
     /**
@@ -69,6 +65,9 @@ class MeetingController extends Controller
      */
     public function destroy(Meeting $meeting)
     {
-        //
+        $user = Auth::user();
+        Meeting::where('id', $meeting->id)->delete();
+        return response()
+                ->json(['message' => 'meeting deleted'], 201);
     }
 }
