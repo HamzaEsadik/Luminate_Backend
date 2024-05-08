@@ -1,14 +1,14 @@
 <?php
 
-use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,4 +42,8 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::put('/accept', [InvitationController::class, 'accepted']);
     //Firing User
     Route::put('/firing', [InvitationController::class, 'firing']);
+    //team
+    Route::get('/team', [TeamController::class, 'team']);
+    //taskfor
+    Route::get('/tasksfor', [TaskController::class, 'getTasks']);
 });

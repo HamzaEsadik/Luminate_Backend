@@ -34,14 +34,15 @@ class InvitationController extends Controller
                 //validate invitation data to store
                 try {
                     $validatedData = $request->validate([
-                        'user_id' => 'required|unique:invitations,user_id',
+                        'email' => 'required',
                         'company_id' => 'required',
                     ]);
                 } catch (ValidationException $e) {
                     return response()->json(['errors' => $e->errors()], 422);
                 }
                 $invitation = new Invitation();
-                $invitation->user_id = $validatedData['user_id'];
+                $invitedUser = User::where('email', $validatedData['email'])->first();
+                $invitation->user_id = $invitedUser->id;
                 $invitation->company_id = $validatedData['company_id'];
                 $invitation->save();
                 return response()
@@ -67,7 +68,7 @@ class InvitationController extends Controller
         $user = Auth::user();
         Invitation::where('id', $invitation->id)->delete();
         return response()
-                ->json(['message' => 'invitation removed'], 201);
+                ->json(['message' => 'invitation deleted'], 201);
     }
 
     /**
@@ -80,6 +81,7 @@ class InvitationController extends Controller
         $user = User::find($authUser->id);
         $invitation = Invitation::where('user_id', $authUser->id)->first();
         $user->company_id = $invitation->company_id;
+        Invitation::where('user_id', $authUser->id)->delete();
         $user->save();
     }
 

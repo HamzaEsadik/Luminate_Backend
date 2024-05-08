@@ -22,18 +22,22 @@ class UserController extends Controller
             $company = Company::find($user->company_id);
             if ($company == null)
             {
-                $company = 'company';
+                $comp = 'company';
+                $company_id = null;
             }
             else
             {
-                $company = $company->name;
+                $comp = $company->name;
+                $company_id = $company->id;
             }
             // Return the name of the authenticated user and company name
             return response()->json([
+                'id' => $user->id,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'is_manager' => $user->is_manager,
-                'company' => $company], 200);
+                'company_id' => $company_id,
+                'company' => $comp], 200);
         } else {
             // If user is not authenticated, return error
             return response()->json(['error' => 'Unauthenticated'], 401);

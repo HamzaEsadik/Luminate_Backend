@@ -23,6 +23,19 @@ class TaskController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     */
+    public function getTasks(Request $request)
+    {
+        $user = Auth::user();
+        $userId = $request->query('user_id');
+        $projectId = $request->query('project_id');
+        return TaskResource::collection(Task::where('user_id', $userId)
+        ->where('project_id', $projectId)
+        ->get());
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
