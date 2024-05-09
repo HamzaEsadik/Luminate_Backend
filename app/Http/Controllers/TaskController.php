@@ -90,6 +90,23 @@ class TaskController extends Controller
     }
 
     /**
+     * Update the specified resource from storage.
+     */
+    public function update(Task $task)
+    {
+        Auth::user();
+        $task = Task::where('id', $task->id)->first();
+        if ($task->done === 0) {
+            $task->done = 1;
+            $task->save();
+        } else {
+            $task->done = 0;
+            $task->save();
+        }
+        return response()->json(['success' => $task->done], 201);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Task $task)

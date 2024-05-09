@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 class CompanyController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource company.
      */
     public function store(Request $request)
     {
